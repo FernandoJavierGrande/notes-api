@@ -1,13 +1,3 @@
-// const Note = require("../models/note"); // change to service
-// const leerNotes = async (req, res) => {
-//   try {
-//     const notes = await Note.find().lean();
-//     res.json(notes);
-//   } catch (error) {
-//     console.log(error);
-//   }
-// };
-
 const noteService = require("../services/notesService");
 
 exports.getAllNotes = async (req, res) => {
@@ -16,5 +6,25 @@ exports.getAllNotes = async (req, res) => {
     res.json({ notes });
   } catch (error) {
     res.status(500).json({ error: error.message });
+  }
+};
+
+exports.createNote = async (req, res) => {
+  try {
+    const note = await noteService.createNote(req.body);
+
+    res.json(note);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+exports.deleteNote = async (req, res) => {
+  const { id } = req.params; //ver
+  try {
+    console.log(`id ${id} .. `);
+    const note = await noteService.deleteNote(id);
+    res.json(note);
+  } catch (error) {
+    res.status(404).json({ error: error.message });
   }
 };
