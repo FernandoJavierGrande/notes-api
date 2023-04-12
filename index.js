@@ -1,8 +1,13 @@
-const express = require("express");
-const noteRouter = require("./routes/routeNotes");
 
-require("dotenv").config();
-require("./database/db");
+import noteRouter from "./routes/routeNotes.js";
+import "dotenv/config";
+import "./database/db.js";
+import express from "express";
+// import cors from "cors";
+// import cookieParser from "cookie-parser";a
+// import authRoutes from "./routes/auth.route.js";
+
+
 
 const app = express();
 

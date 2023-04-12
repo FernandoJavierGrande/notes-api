@@ -1,19 +1,17 @@
-const noteModel = require("../models/note");
+import {Note} from "../models/note.js";
 
-const getAllNotes = async () => {
-  return await noteModel.find();
+export const getAll = async () => {
+  return await Note.find();
 };
 
-const getNoteByID = async (id) => {
-  return await noteModel.findById(id);
+export const getByID = async (id) => {
+  return await Note.findById(id);
 };
 
-const createNote = async (note) => {
-  return await noteModel.create(note);
+export const create = async (note) => {
+  return await Note.create(note);
 };
 
-const deleteNote = async (id) => {
-  return await noteModel.findByIdAndDelete(id);
+export const deleteById = async (id) => {
+  return await Note.findByIdAndDelete(id);
 };
-
-module.exports = { getAllNotes, createNote, deleteNote, getNoteByID };

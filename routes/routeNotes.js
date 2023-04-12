@@ -1,11 +1,12 @@
-const express = require("express"); //here i create the all routes
+// const express = require("express"); 
+import express from "express" //here i create all routes
 
-const {
+import {
   getAllNotes,
   createNote,
   deleteNote,
   getNoteById,
-} = require("../controllers/notesController");
+} from "../controllers/notesController.js";
 
 /// midllewares
 
@@ -15,4 +16,5 @@ router.get("/api/notes", getAllNotes);
 router.post("/api/crearnota", createNote);
 router.delete("/api/eliminar/:id", deleteNote);
 router.get("/api/notes/:id", getNoteById);
-module.exports = router;
+
+export default router;

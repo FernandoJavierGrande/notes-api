@@ -1,10 +1,11 @@
-const noteService = require("../services/notesService");
+import {create,deleteById, getAll,getByID} from "../services/notesService.js";
 
-exports.getAllNotes = async (req, res) => {
+
+export const getAllNotes = async (req, res) => {
   try {
-    const notes = await noteService.getAllNotes();
-    if (note) {
-      res.json({ note });
+    const notes = await getAll();
+    if (notes) {
+      res.json({ notes });
     } else {
       res.status(204).end();
     }
@@ -13,11 +14,11 @@ exports.getAllNotes = async (req, res) => {
   }
 };
 
-exports.getNoteById = async (req, res) => {
+export const getNoteById = async (req, res) => {
   const { id } = req.params;
   // console.log(`!!!! id ${id} .. `);
   try {
-    const note = await noteService.getNoteByID(id);
+    const note = await getByID(id);
 
     if (note) {
       res.json({ note });
@@ -29,19 +30,19 @@ exports.getNoteById = async (req, res) => {
   }
 };
 
-exports.createNote = async (req, res) => {
+export const createNote = async (req, res) => {
   try {
-    const note = await noteService.createNote(req.body);
+    const note = await create(req.body);
 
     res.json(note);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
-exports.deleteNote = async (req, res) => {
+export const deleteNote = async (req, res) => {
   const { id } = req.params; //ver
   try {
-    const note = await noteService.deleteNote(id);
+    const note = await deleteById(id);
     res.json(note);
   } catch (error) {
     res.status(404).json({ error: error.message });
