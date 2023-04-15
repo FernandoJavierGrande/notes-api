@@ -1,20 +1,20 @@
 import { User } from "../models/User.js";
-import { create, getEmail } from "../services/userService.js";
+import { generateRefreshToken, generateToken } from "../utils/tokenManager.js";
 
 export const register = async (req, res) => {
-  
-  // res.json({ok: "login rey"})
   try {
     const { email, password } = req.body;
-    console.log(email);
-    let exist = await getEmail(email);
-    if (exist) throw new Error("this Email already exists");
-    console.log(exist);
-    
-    const user = new User({ email, password });
-    console.log(user);
-    
-    await create(user);
+
+    let user = await User.findOne({ email });
+
+    if (user) throw new Error("this Email already exists");
+
+    user = new User({ email, password });
+
+    await user.save();
+
+    //jwt
+
     res.status(201).json({ user: user });
   } catch (error) {
     return res.status(403).json({ error: error.message });
@@ -22,11 +22,44 @@ export const register = async (req, res) => {
 };
 
 export const login = async (req, res) => {
-  res.json({ ok: "login rey" });
+  try {
+    const { email, password } = req.body;
+
+    let user = await User.findOne({ email });
+    if (!user) return res.status(403).json({ error: "user or pass wrong" });
+
+    const respuestaPassword = await user.comparePassword(password);
+    if (!respuestaPassword)
+      return res.status(403).json({ error: "user or pass wrong" });
+
+    // Generate token jwt
+    const { token, expiresIn } = generateToken(user.id);
+    generateRefreshToken(user.id, res);
+
+    return res.json({ token, expiresIn });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: "Server error" });
+  }
 };
 
-export const infoUser = async (req, res) => {};
+export const infoUser = async (req, res) => {
+  try {
+    const user = await User.findById(req.uid).lean();
+    return res.json({ email: user.email, uid: user.id });
+  } catch (error) {
+    return res.status(500).json({ error: "server error" });
+  }
+};
 
-export const refreshToken = (req, res) => {};
+export const refreshToken = (req, res) => {
+  try {
+    const { token, expiresIn } = generateToken(req.uid);
+    return res.json({ token, expiresIn });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: "error de server" });
+  }
+};
 
 export const logout = (req, res) => {};

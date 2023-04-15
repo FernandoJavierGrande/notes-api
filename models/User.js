@@ -20,7 +20,7 @@ const userSchema = new Schema({
 userSchema.pre("save", async function (next) {
     const user = this;
 
-    if (!user.isModified("password")) return next();
+    if (!user.isModified("password")) return next();// if change another attribute but no the password, go to next
 
     try {
         const salt = await bcrypt.genSalt(10);
@@ -28,7 +28,7 @@ userSchema.pre("save", async function (next) {
         next();
     } catch (error) {
         console.log(error);
-        throw new Error("Error al codificar la contraseña");
+        throw new Error("fail encoding password");
     }
 });
 
