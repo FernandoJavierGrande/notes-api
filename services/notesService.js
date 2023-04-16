@@ -1,7 +1,7 @@
-import {Note} from "../models/note.js";
+import { Note } from "../models/note.js";
 
-export const getAll = async () => {
-  return await Note.find();
+export const getAll = async (uid) => {
+  return await Note.find(uid);
 };
 
 export const getByID = async (id) => {
@@ -13,5 +13,5 @@ export const create = async (note) => {
 };
 
 export const deleteById = async (id) => {
-  return await Note.findByIdAndDelete(id);
+    return await Note.findByIdAndDelete(id);
 };

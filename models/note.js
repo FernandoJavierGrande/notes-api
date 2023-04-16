@@ -15,6 +15,11 @@ const noteSchema = new Schema({
     type: Boolean,
     required: true,
   },
+  uid: {
+    type: Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
 });
 
 export const Note = model("Note", noteSchema);

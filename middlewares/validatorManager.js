@@ -1,4 +1,4 @@
-import { validationResult, body, param } from "express-validator";
+import { body } from "express-validator";
 import { validationResultExpress } from "./validationResultExpress.js";
 
 export const bodyRegisterValidator = [

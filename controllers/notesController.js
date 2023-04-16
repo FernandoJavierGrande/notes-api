@@ -1,9 +1,14 @@
-import {create,deleteById, getAll,getByID} from "../services/notesService.js";
-
+import { Note } from "../models/note.js";
+import {
+  create,
+  deleteById,
+  getAll,
+  getByID,
+} from "../services/notesService.js";
 
 export const getAllNotes = async (req, res) => {
   try {
-    const notes = await getAll();
+    const notes = await getAll({ uid: req.uid });
     if (notes) {
       res.json({ notes });
     } else {
@@ -15,36 +20,65 @@ export const getAllNotes = async (req, res) => {
 };
 
 export const getNoteById = async (req, res) => {
-  const { id } = req.params;
-  // console.log(`!!!! id ${id} .. `);
   try {
+    const { id } = req.params;
+
     const note = await getByID(id);
 
-    if (note) {
-      res.json({ note });
-    } else {
-      res.status(404).end();
+    if (!note) {
+      return res.status(404).json(`Note id: ${id} don't exist`);
     }
+    if (!note.uid.equals(req.uid)) {
+      return res.status(401).json(`Unauthorized`);
+    }
+    const { content, important } = note;
+    return res.json(content, important);
+
   } catch (error) {
-    res.status(404).json({ error: error.message });
+    if (error.kind === "ObjectId") {
+      return res.status(403).json({ error: "Formato id incorrecto" });
+    }
+    return res.status(500).json({ error: error.message });
   }
 };
 
 export const createNote = async (req, res) => {
   try {
-    const note = await create(req.body);
+    const { content, important } = req.body;
 
-    res.json(note);
+    const note = new Note({
+      content,
+      date: Date.now(),
+      important,
+      uid: req.uid,
+    });
+
+    await create(note);
+
+    return res.status(201).json(content);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
 export const deleteNote = async (req, res) => {
-  const { id } = req.params; //ver
   try {
-    const note = await deleteById(id);
-    res.json(note);
+    const { id } = req.params;
+    const note = await Note.findById(id);
+
+    if (!note) return res.status(404).json({ error: "Note don't exist" });
+
+    if (!note.uid.equals(req.uid))
+      return res.status(401).json({ error: "Unauthorized" });
+
+    await Note.findByIdAndDelete(id);
+
+    return res.json({ content: note.content });
   } catch (error) {
-    res.status(404).json({ error: error.message });
+
+    if (error.kind === "ObjectId") {
+      return res.status(403).json({ error: "Formato id incorrecto" });
+    }
+
+    return res.status(404).json({ error: error.message });
   }
 };

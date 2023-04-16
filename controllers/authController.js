@@ -14,8 +14,10 @@ export const register = async (req, res) => {
     await user.save();
 
     //jwt
+    const { token, expiresIn } = generateToken(user.id);
+    generateRefreshToken(user.id, res);
 
-    res.status(201).json({ user: user });
+    return res.status(201).json({ user: user });
   } catch (error) {
     return res.status(403).json({ error: error.message });
   }
@@ -37,7 +39,9 @@ export const login = async (req, res) => {
     generateRefreshToken(user.id, res);
 
     return res.json({ token, expiresIn });
+
   } catch (error) {
+
     console.log(error);
     return res.status(500).json({ error: "Server error" });
   }
@@ -54,12 +58,19 @@ export const infoUser = async (req, res) => {
 
 export const refreshToken = (req, res) => {
   try {
+
     const { token, expiresIn } = generateToken(req.uid);
     return res.json({ token, expiresIn });
+
   } catch (error) {
-    console.log(error);
+
     return res.status(500).json({ error: "error de server" });
+     
   }
 };
+export const logout = (req, res) => {
+  res.clearCookie("refreshToken");
+  res.json({ ok: true });
+};
 
-export const logout = (req, res) => {};
+

@@ -3,7 +3,6 @@ import {
   bodyRegisterValidator,
   bodyLoginValidator,
 } from "../middlewares/validatorManager.js";
-import { body } from "express-validator";
 import {
   login,
   register,
