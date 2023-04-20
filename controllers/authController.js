@@ -64,7 +64,7 @@ export const refreshToken = (req, res) => {
 
   } catch (error) {
 
-    return res.status(500).json({ error: "error de server" });
+    return res.status(500).json({ error: "server error" });
      
   }
 };

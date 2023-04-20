@@ -15,8 +15,6 @@ app.use(cookieParser());
 app.use("/api/v1", noteRouter);
 app.use("/api/v1/auth", authRoutes);
 
-// solo para el ejemplo de login/token
-// app.use(express.static("public"));
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
